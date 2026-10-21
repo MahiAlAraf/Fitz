@@ -1,35 +1,151 @@
-
+import csv
 import os
 import re
-def clear_screen(): 
+
+# ---------------------------------------------------------------------------
+# Settings
+# ---------------------------------------------------------------------------
+
+# The profile file always lives next to this script, no matter which folder
+# the program is started from.
+PROFILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "profiles.csv")
+PROFILE_FIELDS = ["name", "age", "email"]
+
+MIN_AGE = 1
+MAX_AGE = 120
+MAX_NAME_LENGTH = 50
+
+# Email rule: something@domain.tld
+# The domain part needs at least one dot, so "a@b" is rejected.
+EMAIL_PATTERN = re.compile(
+    r"[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@"
+    r"[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?"
+    r"(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+"
+)
+
+
+# ---------------------------------------------------------------------------
+# Screen and input helpers
+# ---------------------------------------------------------------------------
+
+def clear_screen():
     # Executes 'cls' on Windows, 'clear' on Linux and Mac
-    os.system('cls' if os.name == 'nt' else 'clear')
-    
-def choice(min, max):
+    os.system("cls" if os.name == "nt" else "clear")
+
+
+def choice(low, high):
+    """Keep asking until the user types a whole number from low to high."""
     while True:
         try:
             user_input = int(input("Enter your choice: "))
-            if min <= user_input <= max:
-                return user_input
-            else:
-                print(f"Please enter a number between {min} and {max}.")
         except ValueError:
             print("Invalid input. Please enter a number.")
-def validate_email(email):
-    pattertn =(
-        r"^[a-zA-Z0-9.!#\$%&'*+\/=?^_`{|}~-]+@"
-        r"[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?"
-        r"(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
-    )
-    if re.match(pattertn, email):
-        return email
-    else:
-        print("Invalid email format. Please try again.")
-        return validate_email(input("Enter your email: "))
-    
-def enter_toContinue(name=""):
+            continue
+
+        if low <= user_input <= high:
+            return user_input
+        print(f"Please enter a number between {low} and {high}.")
+
+
+def enter_to_continue(name=""):
     print()
     input(f"Press Enter to continue {name}...")
-def profile_reset():
-    if os.path.exists("profiles.txt"):
-        os.remove("profiles.txt")
+
+
+def confirm(question):
+    """Ask a yes/no question. Anything except 'y' or 'yes' counts as no."""
+    answer = input(f"{question} [y/N]: ").strip().lower()
+    return answer in ("y", "yes")
+
+
+# ---------------------------------------------------------------------------
+# Validated questions (each one loops until the answer is valid)
+# ---------------------------------------------------------------------------
+
+def ask_name():
+    while True:
+        name = input("Enter your name: ").strip()
+
+        if name == "":
+            print("Name cannot be empty. Please try again.")
+        elif len(name) > MAX_NAME_LENGTH:
+            print(f"Name is too long (max {MAX_NAME_LENGTH} characters). Please try again.")
+        else:
+            return name
+
+
+def ask_age():
+    while True:
+        age_text = input("Enter your age: ").strip()
+
+        try:
+            age = int(age_text)
+        except ValueError:
+            print("Age must be a whole number. Please try again.")
+            continue
+
+        if MIN_AGE <= age <= MAX_AGE:
+            return age
+        print(f"Age must be between {MIN_AGE} and {MAX_AGE}. Please try again.")
+
+
+def ask_email():
+    while True:
+        email = input("Enter your email: ").strip()
+
+        if EMAIL_PATTERN.fullmatch(email):
+            return email
+        print("Invalid email format. Please try again.")
+
+
+# ---------------------------------------------------------------------------
+# Profile storage (CSV, one header row + one data row)
+# ---------------------------------------------------------------------------
+
+def save_profile(name, age, email):
+    """Write the profile to disk, replacing any old one."""
+    # newline="" is required by the csv module so rows don't get blank lines.
+    with open(PROFILE_PATH, "w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=PROFILE_FIELDS)
+        writer.writeheader()
+        # The csv module wraps values containing commas in quotes by itself,
+        # so a name like "Smith, John" is stored and read back correctly.
+        writer.writerow({"name": name, "age": age, "email": email})
+
+
+def load_profile():
+    """Return the profile as a dict {"name", "age", "email"}.
+
+    Returns None if the file is missing, empty, or damaged, so the caller
+    can simply ask the user to create a new profile.
+    """
+    if not os.path.exists(PROFILE_PATH):
+        return None
+
+    try:
+        with open(PROFILE_PATH, "r", newline="", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            row = next(reader, None)   # None when the file has no data row
+    except (OSError, UnicodeDecodeError, csv.Error):
+        return None
+
+    if row is None:
+        return None
+
+    # Every field must be present and filled in.
+    for field in PROFILE_FIELDS:
+        if not row.get(field):
+            return None
+
+    # The csv module gives back everything as text, so turn age into a number.
+    try:
+        row["age"] = int(row["age"])
+    except ValueError:
+        return None
+
+    return row
+
+
+def delete_profile():
+    if os.path.exists(PROFILE_PATH):
+        os.remove(PROFILE_PATH)

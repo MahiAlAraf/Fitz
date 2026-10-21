@@ -1,38 +1,50 @@
 import sys
-import os
 import random
 import cowsay
 import tools
 from search_fitz import search_fitz
 from get_fitz import get_fitz
 
+# What show_menu() reports back to main()
+MENU_EXIT = "exit"
+MENU_PROFILE_DELETED = "profile_deleted"
+
+
 def main():
     while True:
         tools.clear_screen()
-        
-        if not os.path.exists("profiles.txt"):
-            tools.clear_screen()
-            create_profile()
-        greetings()   
-        if not show_manu():
-            sys.exit("Exiting the program. Goodbye!")
-        else:
-            continue
-        
+
+        profile = tools.load_profile()
+        if profile is None:
+            # No profile yet (first run, deleted, or the file was damaged)
+            profile = create_profile()
+
+        greetings(profile)
+
+        if show_menu() == MENU_EXIT:
+            print("Exiting the program. Goodbye!")
+            sys.exit(0)
+        # Otherwise the profile was deleted: loop again and create a new one.
+
+
 def create_profile():
     print("Welcome !")
     print("==================================")
-    name = input("Enter your name: ")
-    age = input("Enter your age: ")
-    email = tools.validate_email(input("Enter your email: "))
+    name = tools.ask_name()
+    age = tools.ask_age()
+    email = tools.ask_email()
+
     tools.clear_screen()
     print("==================================")
     print(f"\nProfile Created:\nName: {name}\nAge: {age}\nEmail: {email}\n")
     print("==================================")
-    save_profile(name, age, email)
-    tools.enter_toContinue(name=name)
-    
-def show_manu():
+
+    tools.save_profile(name, age, email)
+    tools.enter_to_continue(name=name)
+    return tools.load_profile()
+
+
+def show_menu():
     while True:
         tools.clear_screen()
         print("+--------------------------------------+")
@@ -42,57 +54,65 @@ def show_manu():
         print("|         [4] Exit                     |")
         print("+--------------------------------------+")
         user_choice = tools.choice(1, 4)
+
         if user_choice == 1:
             print("Searching your Fitz...")
             search_fitz()
+            tools.enter_to_continue()
         elif user_choice == 2:
             print("Getting your Fitz...")
             get_fitz()
+            tools.enter_to_continue()
         elif user_choice == 3:
-            if show_profile() == "pDeleted":
-                return "_"
+            if show_profile() == MENU_PROFILE_DELETED:
+                return MENU_PROFILE_DELETED
         elif user_choice == 4:
-            return None
-        ...
-def save_profile(name, age, email):
-    with open("profiles.txt", "w") as file:
-        file.write(f"Name: {name}, Age: {age}, Email: {email}\n")
-    
-def greetings():
-    with open("profiles.txt","r") as file:
-        content = file.read()
-        Name = content.split(",")[0].split(":")[1].strip()
-        
+            return MENU_EXIT
+
+
+def greetings(profile):
     animals = [
-    "cow", "daemon", "dragon", "fox", "ghostbusters", 
-    "kitty", "meow", "miki", "octopus", "stegosaurus", 
-    "stimpy", "trex", "turkey", "turtle", "tux"
+        "cow", "daemon", "dragon", "fox", "ghostbusters",
+        "kitty", "meow", "miki", "octopus", "stegosaurus",
+        "stimpy", "trex", "turkey", "turtle", "tux"
     ]
-    selected_animal = random.choice(animals)   
-    print(cowsay.get_output_string(selected_animal, f"Hello {Name}!"))
-    tools.enter_toContinue(name=Name)
-            
+    selected_animal = random.choice(animals)
+    print(cowsay.get_output_string(selected_animal, f"Hello {profile['name']}!"))
+    tools.enter_to_continue(name=profile["name"])
+
+
 def show_profile():
     tools.clear_screen()
-    with open("profiles.txt","r") as file:
-        contant = file.readline()
-        print("===================================")
-        print("Name", contant.split(",")[0].split(":")[1].strip())
-        print("Age", contant.split(",")[1].split(":")[1].strip())
-        print("Email", contant.split(",")[2].split(":")[1].strip())
-        print("===================================")
-        
+
+    profile = tools.load_profile()
+    if profile is None:
+        print("No profile found.")
+        tools.enter_to_continue()
+        return MENU_PROFILE_DELETED
+
+    print("===================================")
+    print("Name :", profile["name"])
+    print("Age  :", profile["age"])
+    print("Email:", profile["email"])
+    print("===================================")
+
     print("[1] to DELETE profile")
-    print("enter to go back to main menu")
-        
-    if input() == "1":
-        tools.profile_reset()
-        tools.enter_toContinue()
-        return "pDeleted"
-    else:
-         return None
-        
-        
-        
+    print("Press Enter to go back to the main menu")
+
+    if input("> ").strip() == "1":
+        if tools.confirm("Delete your profile? This cannot be undone."):
+            tools.delete_profile()
+            print("Profile deleted.")
+            tools.enter_to_continue()
+            return MENU_PROFILE_DELETED
+
+    return None
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (KeyboardInterrupt, EOFError):
+        # Ctrl+C or Ctrl+D: leave quietly instead of printing a traceback
+        print("\nExiting the program. Goodbye!")
+        sys.exit(0)
