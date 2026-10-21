@@ -2,12 +2,6 @@ import csv
 import os
 import re
 
-# ---------------------------------------------------------------------------
-# Settings
-# ---------------------------------------------------------------------------
-
-# The profile file always lives next to this script, no matter which folder
-# the program is started from.
 PROFILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "profiles.csv")
 PROFILE_FIELDS = ["name", "age", "email"]
 
@@ -24,9 +18,6 @@ EMAIL_PATTERN = re.compile(
 )
 
 
-# ---------------------------------------------------------------------------
-# Screen and input helpers
-# ---------------------------------------------------------------------------
 
 def clear_screen():
     # Executes 'cls' on Windows, 'clear' on Linux and Mac
@@ -57,10 +48,6 @@ def confirm(question):
     answer = input(f"{question} [y/N]: ").strip().lower()
     return answer in ("y", "yes")
 
-
-# ---------------------------------------------------------------------------
-# Validated questions (each one loops until the answer is valid)
-# ---------------------------------------------------------------------------
 
 def ask_name():
     while True:
@@ -98,9 +85,6 @@ def ask_email():
         print("Invalid email format. Please try again.")
 
 
-# ---------------------------------------------------------------------------
-# Profile storage (CSV, one header row + one data row)
-# ---------------------------------------------------------------------------
 
 def save_profile(name, age, email):
     """Write the profile to disk, replacing any old one."""
@@ -137,7 +121,7 @@ def load_profile():
         if not row.get(field):
             return None
 
-    # The csv module gives back everything as text, so turn age into a number.
+  
     try:
         row["age"] = int(row["age"])
     except ValueError:
