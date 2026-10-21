@@ -5,7 +5,7 @@ import tools
 from search_fitz import search_fitz
 from get_fitz import get_fitz
 
-# What show_menu() reports back to main()
+
 MENU_EXIT = "exit"
 MENU_PROFILE_DELETED = "profile_deleted"
 
@@ -16,7 +16,7 @@ def main():
 
         profile = tools.load_profile()
         if profile is None:
-            # No profile yet (first run, deleted, or the file was damaged)
+
             profile = create_profile()
 
         greetings(profile)
@@ -24,7 +24,7 @@ def main():
         if show_menu() == MENU_EXIT:
             print("Exiting the program. Goodbye!")
             sys.exit(0)
-        # Otherwise the profile was deleted: loop again and create a new one.
+
 
 
 def create_profile():
@@ -113,6 +113,5 @@ if __name__ == "__main__":
     try:
         main()
     except (KeyboardInterrupt, EOFError):
-        # Ctrl+C or Ctrl+D: leave quietly instead of printing a traceback
         print("\nExiting the program. Goodbye!")
         sys.exit(0)
