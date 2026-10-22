@@ -45,8 +45,14 @@ def enter_to_continue(name=""):
 
 def confirm(question):
     """Ask a yes/no question. Anything except 'y' or 'yes' counts as no."""
-    answer = input(f"{question} [y/N]: ").strip().lower()
-    return answer in ("y", "yes")
+    while True:
+        print("=====================================================")
+        answer = input(f"{question} [y/N]: ").strip().lower()
+        if answer in ("y", "yes"):
+            return True
+        if answer in ("n", "no"):
+            return False
+        print("Invalid input. Please enter 'y' or 'n'.")
 
 
 def ask_name():
@@ -68,7 +74,7 @@ def ask_age():
         try:
             age = int(age_text)
         except ValueError:
-            print("Age must be a whole number. Please try again.")
+            print("Invalid age. Please try again.")
             continue
 
         if MIN_AGE <= age <= MAX_AGE:
@@ -87,22 +93,15 @@ def ask_email():
 
 
 def save_profile(name, age, email):
-    """Write the profile to disk, replacing any old one."""
-    # newline="" is required by the csv module so rows don't get blank lines.
+    
     with open(PROFILE_PATH, "w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=PROFILE_FIELDS)
         writer.writeheader()
-        # The csv module wraps values containing commas in quotes by itself,
-        # so a name like "Smith, John" is stored and read back correctly.
         writer.writerow({"name": name, "age": age, "email": email})
 
 
 def load_profile():
-    """Return the profile as a dict {"name", "age", "email"}.
 
-    Returns None if the file is missing, empty, or damaged, so the caller
-    can simply ask the user to create a new profile.
-    """
     if not os.path.exists(PROFILE_PATH):
         return None
 

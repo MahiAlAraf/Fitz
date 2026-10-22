@@ -24,6 +24,8 @@ def main():
         if show_menu() == MENU_EXIT:
             print("Exiting the program. Goodbye!")
             sys.exit(0)
+        else:
+            continue
 
 
 
@@ -96,7 +98,7 @@ def show_profile():
     print("Email:", profile["email"])
     print("===================================")
 
-    print("[1] to DELETE profile")
+    print("\n\n[1] to DELETE profile")
     print("Press Enter to go back to the main menu")
 
     if input("> ").strip() == "1":
