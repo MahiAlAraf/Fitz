@@ -42,7 +42,7 @@ def create_profile():
     print("==================================")
 
     tools.save_profile(name, age, email)
-    tools.enter_to_continue(name=name)
+    tools.enter_to_continue(name=name.split(" ")[0].title())
     return tools.load_profile()
 
 
@@ -81,7 +81,7 @@ def greetings(profile):
     ]
     selected_animal = random.choice(animals)
     print(cowsay.get_output_string(selected_animal, f"Hello {profile['name']}!"))
-    tools.enter_to_continue(name=profile["name"])
+    tools.enter_to_continue(name=profile["name"].split(" ")[0].title())
 
 
 def show_profile():

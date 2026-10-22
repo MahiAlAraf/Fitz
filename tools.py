@@ -8,9 +8,6 @@ PROFILE_FIELDS = ["name", "age", "email"]
 MIN_AGE = 1
 MAX_AGE = 120
 MAX_NAME_LENGTH = 50
-
-# Email rule: something@domain.tld
-# The domain part needs at least one dot, so "a@b" is rejected.
 EMAIL_PATTERN = re.compile(
     r"[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@"
     r"[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?"

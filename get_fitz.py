@@ -1,14 +1,10 @@
 import tools
-def make_scoreboard():
-    return {
-        "Comedy": 0,
-        "Romance": 0,
-        "Horror": 0,
-        "Fantasy": 0,
-    }
+import random   
+import Data
 def get_fitz():
-    scorebord = make_scoreboard()
-    for question in Questions:
+    scorebord = Data.scoreboard_Dict()
+    random.shuffle(Data.Questions)
+    for question in Data.Questions:
         tools.clear_screen()
         said_yes = tools.confirm(question["text"])
         if said_yes:
@@ -30,23 +26,6 @@ def top_genre(scoreboard):
                top.append(genre)
      return top[0], top[1]
           
-Questions = [
-    {
-        "text": "Do you want to laugh tonight?",
-        "yes": {"Comedy": 3, "Romance": 1},
-        "no":  {"Horror": 1},
-    },
-    {
-        "text": "Are you okay with scary scenes?",
-        "yes": {"Horror": 3},
-        "no":  {"Comedy": 1, "Romance": 1},
-    },
-    {
-        "text": "Do you like magic or other worlds?",
-        "yes": {"Fantasy": 3},
-        "no":  {"Romance": 1},
-    },
-]
 if __name__ == "__main__":
     tools.clear_screen()
     print("===================================")
