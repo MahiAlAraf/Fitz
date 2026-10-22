@@ -62,8 +62,9 @@ def show_menu():
             search_fitz()
             tools.enter_to_continue()
         elif user_choice == 2:
-            print("Getting your Fitz...")
-            get_fitz()
+            print("==================================")
+            print(             get_fitz())
+            print("==================================")
             tools.enter_to_continue()
         elif user_choice == 3:
             if show_profile() == MENU_PROFILE_DELETED:

@@ -7,15 +7,15 @@ def make_scoreboard():
         "Fantasy": 0,
     }
 def get_fitz():
-     scorebord = make_scoreboard()
-     for question in Questions:
-          said_yes = tools.confirm(question["text"])
-          if said_yes:
-               add_points(scorebord, question["yes"])
-               ...
-          else:
-               add_points(scorebord, question["no"])
-     return top_genre(scorebord)
+    scorebord = make_scoreboard()
+    for question in Questions:
+        tools.clear_screen()
+        said_yes = tools.confirm(question["text"])
+        if said_yes:
+            add_points(scorebord, question["yes"])
+        else:
+            add_points(scorebord, question["no"])
+    return top_genre(scorebord)
      
      
 def add_points(scoreboard, points):
@@ -48,4 +48,7 @@ Questions = [
     },
 ]
 if __name__ == "__main__":
-    print( get_fitz())
+    tools.clear_screen()
+    print("===================================")
+    print(           get_fitz())
+    print("===================================")
