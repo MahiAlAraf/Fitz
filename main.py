@@ -63,7 +63,7 @@ def show_menu():
             tools.enter_to_continue()
         elif user_choice == 2:
             print("==================================")
-            print(             get_fitz())
+            get_fitz()
             print("==================================")
             tools.enter_to_continue()
         elif user_choice == 3:

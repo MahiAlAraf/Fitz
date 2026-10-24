@@ -1,6 +1,7 @@
 import tools
 import random   
 import Data
+from Content_data import get_movies_List
 def get_fitz():
     scorebord = Data.scoreboard_Dict()
     random.shuffle(Data.Questions)
@@ -11,7 +12,18 @@ def get_fitz():
             add_points(scorebord, question["yes"])
         else:
             add_points(scorebord, question["no"])
-    return top_genre(scorebord)
+    Movie_list = get_movies_List(top_genre(scorebord))
+    if not Movie_list:
+        print("No titles found for your genres.")
+            
+    elif Movie_list == "listFailed":
+        print("Error occerd while fetching Movies")
+        
+    elif Movie_list == "gerneFaied":
+        print("Error occerd while fetching the genres")
+    else:   
+        for movie in Movie_list:
+                print(movie)    
      
      
 def add_points(scoreboard, points):
