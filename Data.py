@@ -52,3 +52,7 @@ Questions = [
         "no":  {"Science Fiction": 2, "Action": 1, "Thriller": 1, "Fantasy": 1},
     },
 ]
+
+row_review = {
+    "moive":"AI review"
+}

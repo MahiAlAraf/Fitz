@@ -58,7 +58,6 @@ def show_menu():
         user_choice = tools.choice(1, 4)
 
         if user_choice == 1:
-            print("Searching your Fitz...")
             search_fitz()
             tools.enter_to_continue()
         elif user_choice == 2:
