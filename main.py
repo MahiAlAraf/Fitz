@@ -5,7 +5,6 @@ import tools
 from search_fitz import search_fitz
 from get_fitz import get_fitz
 
-
 MENU_EXIT = "exit"
 MENU_PROFILE_DELETED = "profile_deleted"
 
@@ -26,7 +25,6 @@ def main():
             sys.exit(0)
         else:
             continue
-
 
 
 def create_profile():
@@ -74,9 +72,21 @@ def show_menu():
 
 def greetings(profile):
     animals = [
-        "cow", "daemon", "dragon", "fox", "ghostbusters",
-        "kitty", "meow", "miki", "octopus", "stegosaurus",
-        "stimpy", "trex", "turkey", "turtle", "tux"
+        "cow",
+        "daemon",
+        "dragon",
+        "fox",
+        "ghostbusters",
+        "kitty",
+        "meow",
+        "miki",
+        "octopus",
+        "stegosaurus",
+        "stimpy",
+        "trex",
+        "turkey",
+        "turtle",
+        "tux",
     ]
     selected_animal = random.choice(animals)
     print(cowsay.get_output_string(selected_animal, f"Hello {profile['name']}!"))

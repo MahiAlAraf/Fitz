@@ -1,6 +1,7 @@
 import os
 import sys
 import requests
+
 api_key = os.environ.get("TMDB_API_KEY")
 
 

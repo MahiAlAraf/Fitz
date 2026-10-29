@@ -15,7 +15,6 @@ EMAIL_PATTERN = re.compile(
 )
 
 
-
 def clear_screen():
     # Executes 'cls' on Windows, 'clear' on Linux and Mac
     os.system("cls" if os.name == "nt" else "clear")
@@ -59,7 +58,9 @@ def ask_name():
         if name == "":
             print("Name cannot be empty. Please try again.")
         elif len(name) > MAX_NAME_LENGTH:
-            print(f"Name is too long (max {MAX_NAME_LENGTH} characters). Please try again.")
+            print(
+                f"Name is too long (max {MAX_NAME_LENGTH} characters). Please try again."
+            )
         else:
             return name
 
@@ -88,9 +89,8 @@ def ask_email():
         print("Invalid email format. Please try again.")
 
 
-
 def save_profile(name, age, email):
-    
+
     with open(PROFILE_PATH, "w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=PROFILE_FIELDS)
         writer.writeheader()
@@ -105,7 +105,7 @@ def load_profile():
     try:
         with open(PROFILE_PATH, "r", newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file)
-            row = next(reader, None)   # None when the file has no data row
+            row = next(reader, None)  # None when the file has no data row
     except (OSError, UnicodeDecodeError, csv.Error):
         return None
 
@@ -117,7 +117,6 @@ def load_profile():
         if not row.get(field):
             return None
 
-  
     try:
         row["age"] = int(row["age"])
     except ValueError:

@@ -2,106 +2,109 @@ from Content_data import api_key
 from Data import row_review
 import tools
 import requests
+import chatbot
+import sys
+
+
 def search_fitz():
-    
+
     tools.clear_screen()
-    user_search =input("\n Search you fitz :").strip().lower()
-    if not user_search in row_review:
-        responce = Ai_responce(user_search)
-        if responce=='error':
+    user_search = input("\n Search you fitz :").strip()
+    corrected = chatbot.Check_title(user_search).lower()
+    if user_search != corrected:
+        print(f"showing results for {corrected}")
+    if corrected == "UNKNOWN":
+        sys.exit(" Sorry: title not found")
+
+    if not corrected in row_review:
+        responce = Ai_responce(corrected)
+        if responce == "error":
             print("Could not find that title. Try again.")
-            return 'error'
-        row_review[user_search] = responce
+            return "error"
+        row_review[corrected] = responce
     else:
-        responce = row_review[user_search]
+        responce = row_review[corrected]
     tools.clear_screen()
-    print("Ai generated responce:")    
+    print("Ai generated responce:")
     print("================================================")
     print(responce)
     print("================================================")
 
-        
 
 def Ai_responce(Title):
     try:
-        Media_ID , Type = fetch_id(Title)
+        Media_ID, Type = fetch_id(Title)
     except ValueError:
-        return 'error'
+        return "error"
     try:
-        Age_rating, Genres, Overview, Keywords  = fetch_details(Media_ID,Type)
+        Age_rating, Genres, Overview, Keywords = fetch_details(Media_ID, Type)
     except ValueError:
-        return 'error'
-    
+        return "error"
+
     # TEMPORARY: shows the real data until Gemini is connected
-    return f" this is for test now\n {Age_rating} | {Genres} | {Keywords}"
-  
-  
+    return chatbot.Unique_message(Title, Age_rating, Genres, Overview, Keywords)
+
+
 def fetch_id(Title):
     url = "https://api.themoviedb.org/3/search/multi"
-    params = {"query": Title, "api_key": api_key}   # requests encodes spaces for us
-    
+    params = {"query": Title, "api_key": api_key}  # requests encodes spaces for us
+
     try:
         responce = requests.get(url, params=params, timeout=10)
-        responce.raise_for_status()                 # errors on 401, 404, 500...
+        responce.raise_for_status()  # errors on 401, 404, 500...
     except requests.exceptions.RequestException:
         raise ValueError("Network or TMDB error in fetch_id")
-    
+
     data = responce.json()
-    
+
     for item in data["results"]:
         if item["media_type"] == "movie" or item["media_type"] == "tv":
             return item["id"], item["media_type"]
-    
-  
-    raise ValueError("No movie or series found")
-    
 
-def fetch_details(ID,Type):
-    if Type =='tv':
-        rating_section = 'content_ratings'
-        path = 'results'
+    raise ValueError("No movie or series found")
+
+
+def fetch_details(ID, Type):
+    if Type == "tv":
+        rating_section = "content_ratings"
+        path = "results"
     else:
-        rating_section = 'release_dates'
-        path = 'keywords'
+        rating_section = "release_dates"
+        path = "keywords"
     url = f"https://api.themoviedb.org/3/{Type}/{ID}"
     params = {"api_key": api_key, "append_to_response": f"keywords,{rating_section}"}
-    
+
     try:
         responce = requests.get(url, params=params, timeout=10)
         responce.raise_for_status()
     except requests.exceptions.RequestException:
         raise ValueError("Network or TMDB error in fetch_details")
-    
-    
-    #---------------------------Overview---------------------------------
-    Data = responce.json()   
+
+    # ---------------------------Overview---------------------------------
+    Data = responce.json()
     Overview = Data.get("overview", "")
     if Overview == "":
         Overview = "No overview available"
-        
-        
-    #---------------------------get genre------------------
+
+    # ---------------------------get genre------------------
     Genres = []
     for genre in Data.get("genres", []):
         Genres.append(genre["name"])
-        
-        
+
     # ---------- Keywords: list of dicts -> list of names ---------
     Keywords = []
-    
+
     keyword_list = Data.get("keywords", {}).get(path, [])
     for keyword in keyword_list:
         Keywords.append(keyword["name"])
-        
-        
-        
+
     # ---------- Age rating ----------
-    Age_rating = "Unknown"          # default value
+    Age_rating = "Unknown"  # default value
     rating_list = Data.get(rating_section, {}).get("results", [])
 
     for country in rating_list:
         if country["iso_3166_1"] != "US":
-            continue                # not the US entry, check the next country
+            continue  # not the US entry, check the next country
 
         if Type == "tv":
             # TV: the rating sits directly on the country entry
@@ -112,7 +115,11 @@ def fetch_details(ID,Type):
             for release in country["release_dates"]:
                 if release["certification"] != "":
                     Age_rating = release["certification"]
-                    break           # first non-empty certification is enough
-        break                       # US found, stop looking at other countries
-    
+                    break  # first non-empty certification is enough
+        break  # US found, stop looking at other countries
+
     return Age_rating, Genres, Overview, Keywords
+
+
+if __name__ == "__main__":
+    search_fitz()
