@@ -11,10 +11,10 @@ def search_fitz():
     tools.clear_screen()
     user_search = input("\n Search you fitz :").strip()
     corrected = chatbot.Check_title(user_search).lower()
+    if corrected == "unknown":
+        sys.exit(" Sorry: title not found")
     if user_search != corrected:
         print(f"showing results for {corrected}")
-    if corrected == "UNKNOWN":
-        sys.exit(" Sorry: title not found")
 
     if not corrected in row_review:
         responce = Ai_responce(corrected)
