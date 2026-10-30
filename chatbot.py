@@ -18,7 +18,7 @@ def Check_title(Title):
 def Unique_message(Title, Age_rating, Genres, Overview, Keywords):
     prompt = (
         "You are a direct content advisor for movies and TV shows. Analyze the provided media details and provide a ultra-brief target audience advisory (maximum 3-4 sentences total).\n"
-        "Do NOT write marketing summaries, reviews, or promotional hype.\n:"
+        "Do NOT write marketing summaries, reviews, or promotional hype. just the pure truth \n:"
         "Make the Response very simple and easy to understand Avoid using complex grammatical words.\n"
         "Make the answers in two para Organized in two specific sections   1.Target Audience:   2.Content & Suitability:\n"
         "Focus only on:\n"

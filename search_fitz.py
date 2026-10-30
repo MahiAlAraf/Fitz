@@ -1,34 +1,34 @@
 from Content_data import api_key
-from Data import row_review
+from Data import raw_review
 import tools
 import requests
 import chatbot
-import sys
 
 
-def search_fitz():
+def search_fitz(user_search=""):
 
     tools.clear_screen()
-    user_search = input("\n Search you fitz :").strip()
+    if not user_search:
+        user_search = input("\n Search you fitz :").strip()
     corrected = chatbot.Check_title(user_search).lower()
     if corrected == "unknown":
-        sys.exit(" Sorry: title not found")
+        return "_"  # title not foud my ai
     if user_search != corrected:
         print(f"showing results for {corrected}")
 
-    if not corrected in row_review:
+    if not corrected in raw_review:
         responce = Ai_responce(corrected)
         if responce == "error":
             print("Could not find that title. Try again.")
             return "error"
-        row_review[corrected] = responce
+        raw_review[corrected] = responce
     else:
-        responce = row_review[corrected]
+        responce = raw_review[corrected]
     tools.clear_screen()
-    print("Ai generated responce:")
-    print("================================================")
+    print(f"Ai generated responce:            \n{corrected.title()}")
+    print("================================================================================")
     print(responce)
-    print("================================================")
+    print( "==================================================================================")
 
 
 def Ai_responce(Title):
