@@ -1,4 +1,4 @@
-def scoreboard ()
+def scoreboard ():
     return {
     # ---- movie genres (unchanged) ----
     "Comedy": 0,
