@@ -5,44 +5,58 @@ import requests
 import chatbot
 
 
-def search_fitz(user_search=""):
-
+def search_fitz():
+    """User typed a name: correct it, find the id, then show the review."""
     tools.clear_screen()
+    user_search = input("\n Search your fitz: ").strip()
     if not user_search:
-        user_search = input("\n Search you fitz :").strip()
-    corrected = chatbot.Check_title(user_search).lower()
-    if corrected == "unknown":
-        return "_"  # title not foud my ai
-    if user_search != corrected:
-        print(f"showing results for {corrected}")
+        print("Nothing typed.")
+        return
 
-    if not corrected in raw_review:
-        responce = Ai_responce(corrected)
-        if responce == "error":
-            print("Could not find that title. Try again.")
-            return "error"
-        raw_review[corrected] = responce
+    corrected = chatbot.Check_title(user_search)
+    if corrected.lower() == "unknown":
+        print("Sorry: title not found")
+        return
+    if corrected.lower() != user_search.lower():
+        print(f"Loading results for {corrected}.....")
+
+    try:
+        Media_ID, Type = fetch_id(corrected)
+    except ValueError:
+        print("Could not find that title. Try again.")
+        return
+
+    show_review(Media_ID, Type, corrected)
+
+
+def show_picked(item):
+    """User picked from the list: we already know the id, so skip Gemini and fetch_id."""
+    show_review(item["id"], item["type"], item["title"])
+
+
+def show_review(Media_ID, Type, Title):
+    key = (Type, Media_ID)
+
+    if key in raw_review:
+        responce = raw_review[key]
     else:
-        responce = raw_review[corrected]
+        try:
+            Age_rating, Genres, Overview, Keywords = fetch_details(Media_ID, Type)
+        except ValueError:
+            print("Failed to load details")
+            return
+
+        responce = chatbot.Unique_message(Title, Age_rating, Genres, Overview, Keywords)
+        if not responce:
+            print("The AI could not write a review for this title.")
+            return
+        raw_review[key] = responce  # only cache real text
+
     tools.clear_screen()
-    print(f"Ai generated responce:            \n{corrected.title()}")
-    print("================================================================================")
+    print(f"Ai generated responce:\n{Title}")
+    print("=" * 80)
     print(responce)
-    print( "==================================================================================")
-
-
-def Ai_responce(Title):
-    try:
-        Media_ID, Type = fetch_id(Title)
-    except ValueError:
-        return "error"
-    try:
-        Age_rating, Genres, Overview, Keywords = fetch_details(Media_ID, Type)
-    except ValueError:
-        return "error"
-
-    # TEMPORARY: shows the real data until Gemini is connected
-    return chatbot.Unique_message(Title, Age_rating, Genres, Overview, Keywords)
+    print("=" * 80)
 
 
 def fetch_id(Title):

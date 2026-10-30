@@ -1,29 +1,29 @@
-def scoreboard ():
+def scoreboard():
     return {
-    # ---- movie genres (unchanged) ----
-    "Comedy": 0,
-    "Romance": 0,
-    "Horror": 0,
-    "Fantasy": 0,
-    "Action": 0,
-    "Adventure": 0,
-    "Animation": 0,
-    "Crime": 0,
-    "Documentary": 0,
-    "Drama": 0,
-    "History": 0,
-    "Mystery": 0,
-    "Science Fiction": 0,
-    "Thriller": 0,
-    # ---- TV-only genres (names must match TMDB's TV genre list exactly) ----
-    "Action & Adventure": 0,
-    "Sci-Fi & Fantasy": 0,
-    "War & Politics": 0,
-    "Family": 0,
-    "Reality": 0,
-    "Soap": 0,
-    "Western": 0,
-}
+        # ---- movie genres (unchanged) ----
+        "Comedy": 0,
+        "Romance": 0,
+        "Horror": 0,
+        "Fantasy": 0,
+        "Action": 0,
+        "Adventure": 0,
+        "Animation": 0,
+        "Crime": 0,
+        "Documentary": 0,
+        "Drama": 0,
+        "History": 0,
+        "Mystery": 0,
+        "Science Fiction": 0,
+        "Thriller": 0,
+        # ---- TV-only genres (names must match TMDB's TV genre list exactly) ----
+        "Action & Adventure": 0,
+        "Sci-Fi & Fantasy": 0,
+        "War & Politics": 0,
+        "Family": 0,
+        "Reality": 0,
+        "Soap": 0,
+        "Western": 0,
+    }
 
 
 Questions_movie = [
@@ -128,4 +128,4 @@ Questions_tv = [
     },
 ]
 
-raw_review = {"moive": "AI review"}
+raw_review = {}

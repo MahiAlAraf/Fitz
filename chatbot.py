@@ -11,7 +11,10 @@ def Check_title(Title):
         "If you are not sure what they mean, reply with exactly: UNKNOWN\n\n"
         f"User input: {Title}"
     )
-    Response = client.models.generate_content(model=Model, contents=prompt)
+    Response = client.models.generate_content(
+        model=Model,
+        contents=prompt,
+    )
     return Response.text.strip()
 
 

@@ -2,7 +2,7 @@ import tools
 import random
 import Data
 from Content_data import get_content_List, add_limit
-from search_fitz import search_fitz
+from search_fitz import show_picked
 
 
 def get_fitz():
@@ -43,18 +43,15 @@ def get_fitz():
         while True:
             tools.clear_screen()
             for serial, content in content_list.items():
-                print(f"[{serial}] {content}")
+                print(f"[{serial}] {content['title']}")
 
             print("-------------------------------------------")
             print("To get Details \n Enter the Serial number")
             print("Or Press Enter to return:")
-            decision = see_details(content_list)
-            if not decision:
+            details = see_details(content_list)
+            if details is None:
                 break
-            if search_fitz(user_search=decision):
-                print(
-                    " Sorry: title not found"
-                )  # ---> search fitz only returns a vlaue if a title is not found
+            show_picked(details)
             tools.enter_to_continue()
 
 
@@ -70,18 +67,21 @@ def choose_type():
     return "movie"
 
 
-def see_details(movie_dict):
+def see_details(content_dict):
     while True:
-        choice = input("-> ")
+        choice = input("-> ").strip()
         if not choice:
-            return False
+            return None  # Enter = go back
+
+        if not choice.isdigit():
+            print("Invalid input: enter a number.")
+            continue
+
         choice = int(choice)
-        if 1 <= choice <= add_limit:  # from content_data
-            break
-        print("Invalid input: try again.. ")
-    for serial, content in movie_dict.items():
-        if choice == int(serial):
-            return content.lower()
+        if choice in content_dict:  # keys are 1..N, however many results came back
+            return content_dict[choice]  # the whole item: id, type, title
+
+        print(f"Invalid input: enter a number from 1 to {len(content_dict)}.")
 
 
 def add_points(scoreboard, points):
