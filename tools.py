@@ -1,7 +1,7 @@
 import csv
 import os
 import re
-
+from Data import Cache
 PROFILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "profiles.csv")
 PROFILE_FIELDS = ["name", "age", "email"]
 
@@ -128,3 +128,39 @@ def load_profile():
 def delete_profile():
     if os.path.exists(PROFILE_PATH):
         os.remove(PROFILE_PATH)
+        
+        
+def save_records(records):
+    for key, response in records.items():
+        Cache[key] = response  # Update the in-memory cache
+        
+    opening_mode = "w" if not os.path.exists("records.csv") else "a"
+    with open("records.csv", opening_mode, newline="", encoding="utf-8") as file:
+        fieldnames = ["key", "response"]
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        if opening_mode == "w":
+            writer.writeheader()
+        for key, response in records.items():
+            writer.writerow({"key": key, "response": response})
+   
+   
+   
+def get_records():
+    if not os.path.exists("records.csv"):
+        return {}
+    try:
+        with open("records.csv", "r", newline="", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            row = next(reader, None)  # Skip header
+    except (OSError, UnicodeDecodeError, csv.Error):
+            return {}
+    if row is None:
+        return {}
+    for field in ["key, response"]:
+        if not row.get(field):
+            return {}
+    records = {}
+    for key, response in reader:
+        records[key] = response
+    return records
+    

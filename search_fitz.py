@@ -1,5 +1,4 @@
 from Content_data import api_key
-from Data import raw_review
 import tools
 import requests
 import chatbot
@@ -36,9 +35,10 @@ def show_picked(item):
 
 def show_review(Media_ID, Type, Title):
     key = (Type, Media_ID)
-
-    if key in raw_review:
-        responce = raw_review[key]
+    
+    records = tools.get_records()
+    if key in records:
+        responce = records[key]
     else:
         try:
             Age_rating, Genres, Overview, Keywords = fetch_details(Media_ID, Type)
@@ -50,7 +50,8 @@ def show_review(Media_ID, Type, Title):
         if not responce:
             print("The AI could not write a review for this title.")
             return
-        raw_review[key] = responce  # only cache real text
+        records[key] = responce  # only cache real text
+        tools.save_records(records)
 
     tools.clear_screen()
     print(f"Ai generated responce:\n{Title}")

@@ -17,6 +17,7 @@ def main():
         if profile is None:
 
             profile = create_profile()
+            tools.clear_screen()
 
         greetings(profile)
 
