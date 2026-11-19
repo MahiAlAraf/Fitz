@@ -50,14 +50,16 @@ def show_review(Media_ID, Type, Title):
         if not responce:
             print("The AI could not write a review for this title.")
             return
-        records[key] = responce  # only cache real text
-        tools.save_records(records)
+        tools.save_record(key, responce)
 
     tools.clear_screen()
     print(f"Ai generated responce:\n{Title}")
     print("=" * 80)
     print(responce)
     print("=" * 80)
+    print("[1] Mark as watched")
+    print("[enter] to return to the menu")
+    tools.mark_watched(Type, Media_ID, Title)
 
 
 def fetch_id(Title):

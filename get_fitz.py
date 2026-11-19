@@ -52,7 +52,6 @@ def get_fitz():
             if details is None:
                 break
             show_picked(details)
-            tools.enter_to_continue()
 
 
 def choose_type():

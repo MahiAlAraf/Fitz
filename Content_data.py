@@ -1,8 +1,8 @@
 import os
 import requests
-
+import tools
 api_key = os.environ.get("TMDB_API_KEY")
-
+watched = tools.watched_content()
 add_limit = 10
 
 
@@ -45,7 +45,9 @@ def get_content_List(genres_Tuple, Type):
 
     return ContentList_Dict(content_data, Type, extra_data)
 
-def get_title(item, TYPE):
+def get_title(item, TYPE, watched=watched):
+    if (TYPE, item["id"]) in watched:
+        return None
     if TYPE == "tv":
         return item["name"]
     return item["title"]
@@ -60,10 +62,13 @@ def ContentList_Dict(Main_data_package, TYPE, Sub_Package=None):
     for item in Main_data_package.get("results", []):
         if slot > add_limit:
             break
+        title = get_title(item, TYPE)
+        if not title:
+            continue  
         content_info[slot] = {
             "id": item["id"],
             "type": TYPE,
-            "title": get_title(item, TYPE),
+            "title": title,
         }
         seen_ids.add(item["id"])
         slot += 1
@@ -73,12 +78,15 @@ def ContentList_Dict(Main_data_package, TYPE, Sub_Package=None):
         for item in Sub_Package.get("results", []):
             if slot > add_limit:
                 break
+            title = get_title(item, TYPE)
+            if not title:
+                continue
             if item["id"] in seen_ids:
                 continue  # already listed, do not use a slot
             content_info[slot] = {
                 "id": item["id"],
                 "type": TYPE,
-                "title": get_title(item, TYPE),
+                "title": title,
             }
             seen_ids.add(item["id"])
             slot += 1

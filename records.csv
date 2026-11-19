@@ -1,11 +1,6 @@
-key,response
-"('tv', 60735)","**Target Audience:**
-Fans of superhero action, comic book adaptations, and light science fiction will enjoy this show. It is best suited for teens, young adults, and families with older children.
+type,id,response
+movie,429617,"1. Target Audience: 
+This movie is best for teenagers, comic book fans, and families with older kids who like superhero stories. People who enjoy action, adventure, and Marvel movies will like it. 
 
-**Content & Suitability:**
-The show contains moderate comic-book violence, peril, and dark thematic elements like murder and grief. It is generally not recommended for very young children due to scary villains and intense action scenes."
-"('tv', 60735)","1.Target Audience: 
-This show is best for teenagers, families, and fans of superhero comic books. People who enjoy light sci-fi action and adventures will like it.
-
-2.Content & Suitability: 
-It contains frequent fantasy violence, mild peril, and occasional dark themes. It is generally safe for older kids and teens to watch."
+2. Content & Suitability: 
+It has comic-book violence, destruction, and scary monsters, but nothing too gory. There is also mild teen romance and some sad moments about grief. It is generally safe for kids aged 13 and up, but parents of younger children should use caution."

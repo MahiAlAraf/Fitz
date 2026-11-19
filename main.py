@@ -58,7 +58,7 @@ def show_menu():
 
         if user_choice == 1:
             search_fitz()
-            tools.enter_to_continue()
+            
         elif user_choice == 2:
             print("==================================")
             get_fitz()

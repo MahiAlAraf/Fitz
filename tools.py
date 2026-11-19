@@ -2,9 +2,11 @@ import csv
 import os
 import re
 from Data import Cache
-PROFILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "profiles.csv")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROFILE_PATH = os.path.join(BASE_DIR, "profiles.csv")
 PROFILE_FIELDS = ["name", "age", "email"]
-
+RECORDS_PATH = os.path.join(BASE_DIR, "records.csv")
+MARKED_PATH = os.path.join(BASE_DIR, "marked.csv")
 MIN_AGE = 1
 MAX_AGE = 120
 MAX_NAME_LENGTH = 50
@@ -129,38 +131,59 @@ def delete_profile():
     if os.path.exists(PROFILE_PATH):
         os.remove(PROFILE_PATH)
         
-        
-def save_records(records):
-    for key, response in records.items():
-        Cache[key] = response  # Update the in-memory cache
-        
-    opening_mode = "w" if not os.path.exists("records.csv") else "a"
-    with open("records.csv", opening_mode, newline="", encoding="utf-8") as file:
-        fieldnames = ["key", "response"]
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        if opening_mode == "w":
-            writer.writeheader()
-        for key, response in records.items():
-            writer.writerow({"key": key, "response": response})
-   
-   
-   
-def get_records():
-    if not os.path.exists("records.csv"):
-        return {}
-    try:
-        with open("records.csv", "r", newline="", encoding="utf-8") as file:
-            reader = csv.DictReader(file)
-            row = next(reader, None)  # Skip header
-    except (OSError, UnicodeDecodeError, csv.Error):
-            return {}
-    if row is None:
-        return {}
-    for field in ["key, response"]:
-        if not row.get(field):
-            return {}
-    records = {}
-    for key, response in reader:
-        records[key] = response
-    return records
     
+def get_records():
+    records = {}
+    if not os.path.exists(RECORDS_PATH):
+        return records
+    try:
+        with open(RECORDS_PATH, "r", newline="", encoding="utf-8") as file:
+            for row in csv.DictReader(file):
+                key = (row["type"], int(row["id"]))
+                records[key] = row["response"]
+    except (OSError, UnicodeDecodeError, csv.Error, KeyError, ValueError):
+        return {}
+    return records
+
+
+def save_record(key, response):
+    """Append ONE new review (not the whole dict)."""
+    Type, Media_ID = key
+    Cache[key] = response
+    file_exists = os.path.exists(RECORDS_PATH)
+    with open(RECORDS_PATH, "a", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=["type", "id", "response"])
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow({"type": Type, "id": Media_ID, "response": response})
+
+
+def watched_content():
+    """Return a set of (type, id). Empty set if nothing marked yet."""
+    watched = set()
+    if not os.path.exists(MARKED_PATH):
+        return watched
+    try:
+        with open(MARKED_PATH, "r", newline="", encoding="utf-8") as file:
+            for row in csv.DictReader(file):
+                watched.add((row["type"], int(row["id"])))
+    except (OSError, UnicodeDecodeError, csv.Error, KeyError, ValueError):
+        pass
+    return watched
+
+
+def mark_watched(Type, Media_ID, Title):
+    choice = input("> ").strip()
+    if choice != "1":                      # string compare
+        return
+    if (Type, Media_ID) in watched_content():
+        print("Already marked as watched.")
+        return
+
+    file_exists = os.path.exists(MARKED_PATH)
+    with open(MARKED_PATH, "a", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=["type", "id", "title"])
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow({"type": Type, "id": Media_ID, "title": Title})
+    print("Marked as watched.")
