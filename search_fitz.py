@@ -41,7 +41,7 @@ def show_review(Media_ID, Type, Title):
         responce = records[key]
     else:
         try:
-            Age_rating, Genres, Overview, Keywords = fetch_details(Media_ID, Type)
+            Age_rating, Genres, Overview, Keywords, Poster_url,Backdrop_url = fetch_details(Media_ID, Type)
         except ValueError:
             print("Failed to load details")
             return
@@ -50,7 +50,7 @@ def show_review(Media_ID, Type, Title):
         if not responce:
             print("The AI could not write a review for this title.")
             return
-        tools.save_record(key, responce)
+        tools.save_record(key, responce,Poster_url,Backdrop_url)
 
     tools.clear_screen()
     print(f"Ai generated responce:\n{Title}")
@@ -102,6 +102,22 @@ def fetch_details(ID, Type):
     Overview = Data.get("overview", "")
     if Overview == "":
         Overview = "No overview available"
+        
+    # --------------------------Poster and Backdrop--------------------------
+    IMAGE_BASE_URL = "https://image.tmdb.org/t/p"
+
+    Poster_path = Data.get("poster_path")
+    Backdrop_path = Data.get("backdrop_path")
+
+    if Poster_path is None:
+        Poster_url = None
+    else:
+        Poster_url = IMAGE_BASE_URL + "/w500" + Poster_path
+
+    if Backdrop_path is None:
+        Backdrop_url = None
+    else:
+        Backdrop_url = IMAGE_BASE_URL + "/original" + Backdrop_path
 
     # ---------------------------get genre------------------
     Genres = []
@@ -135,7 +151,7 @@ def fetch_details(ID, Type):
                     break  # first non-empty certification is enough
         break  # US found, stop looking at other countries
 
-    return Age_rating, Genres, Overview, Keywords
+    return Age_rating, Genres, Overview, Keywords, Poster_url,Backdrop_url
 
 
 if __name__ == "__main__":

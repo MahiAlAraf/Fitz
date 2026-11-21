@@ -146,16 +146,16 @@ def get_records():
     return records
 
 
-def save_record(key, response):
+def save_record(key, response,posterLink,backdropLink):
     """Append ONE new review (not the whole dict)."""
     Type, Media_ID = key
     Cache[key] = response
     file_exists = os.path.exists(RECORDS_PATH)
     with open(RECORDS_PATH, "a", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=["type", "id", "response"])
+        writer = csv.DictWriter(file, fieldnames=["type", "id", "response","posterLink","backdropLink"])
         if not file_exists:
             writer.writeheader()
-        writer.writerow({"type": Type, "id": Media_ID, "response": response})
+        writer.writerow({"type": Type, "id": Media_ID, "response": response,"posterLink":posterLink,"backdropLink":backdropLink})
 
 
 def watched_content():

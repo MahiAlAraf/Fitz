@@ -64,11 +64,15 @@ def ContentList_Dict(Main_data_package, TYPE, Sub_Package=None):
             break
         title = get_title(item, TYPE)
         if not title:
-            continue  
+            continue
+        poster_url= image_url_make(item.get("poster_path"),resulation="w500") 
+        backdrop_url= image_url_make(item.get("backdrop_path"),resulation="original")
         content_info[slot] = {
             "id": item["id"],
             "type": TYPE,
             "title": title,
+            "poster_url":poster_url,
+            "backdrop_url": backdrop_url
         }
         seen_ids.add(item["id"])
         slot += 1
@@ -109,6 +113,8 @@ def main():
     for item in List:
         print(item)
 
+def image_url_make(path,resulation):
+    return f"https://image.tmdb.org/t/p/{resulation}{path}"
 
 if __name__ == "__main__":
     main()

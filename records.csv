@@ -1,6 +1,6 @@
-type,id,response
-movie,429617,"1. Target Audience: 
-This movie is best for teenagers, comic book fans, and families with older kids who like superhero stories. People who enjoy action, adventure, and Marvel movies will like it. 
+type,id,response,posterLink,backdropLink
+movie,693134,"1. Target Audience: 
+This movie is best for teenagers and adults who love epic sci-fi adventures and massive space battles. It is not made for young kids or people who prefer light, fast comedies.
 
 2. Content & Suitability: 
-It has comic-book violence, destruction, and scary monsters, but nothing too gory. There is also mild teen romance and some sad moments about grief. It is generally safe for kids aged 13 and up, but parents of younger children should use caution."
+It contains intense sci-fi violence, war scenes, and dark themes about revenge and power, but no explicit sexual content. It is rated PG-13 and is best watched by teens and adults, ideally not as a family movie for younger children.",https://image.tmdb.org/t/p/w500/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg,https://image.tmdb.org/t/p/original/eZ239CUp1d6OryZEBPnO2n87gMG.jpg

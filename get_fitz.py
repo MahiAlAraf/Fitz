@@ -44,6 +44,9 @@ def get_fitz():
             tools.clear_screen()
             for serial, content in content_list.items():
                 print(f"[{serial}] {content['title']}")
+                # """this is for url test"""
+                # print(f"Poster_url :{content["poster_url"]}")
+                # print(f"backdrop_url: {content["backdrop_url"]}")
 
             print("-------------------------------------------")
             print("To get Details \n Enter the Serial number")
